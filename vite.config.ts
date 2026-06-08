@@ -1,17 +1,24 @@
 import { defineConfig } from "vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { nitro } from "nitro/vite";
+import viteReact from "@vitejs/plugin-react";
 
 export default defineConfig({
-  server: { port: 8080 },
   plugins: [
     tsconfigPaths(),
     tailwindcss(),
     tanstackStart(),
-    nitro({ preset: "vercel" }),
+    nitro({
+      preset: "vercel",
+      rollupConfig: {
+        external: [],
+      },
+      alias: {
+        "^tslib$": "tslib/tslib.es6.mjs",
+      },
+    }),
     viteReact(),
   ],
 });
