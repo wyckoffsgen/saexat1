@@ -1,46 +1,28 @@
-import "./lib/error-capture";
-import { consumeLastCapturedError } from "./lib/error-capture";
-import { renderErrorPage } from "./lib/error-page";
-
 type ServerEntry = {
   fetch: (request: Request) => Promise<Response> | Response;
 };
 
-let serverEntryPromise: Promise<ServerEntry> | undefined;
-async function getServerEntry(): Promise<ServerEntry> {
-  if (!serverEntryPromise) {
-    serverEntryPromise = import("@tanstack/react-start/server-entry").then(
+let entryPromise: Promise<ServerEntry> | undefined;
+async function getEntry(): Promise<ServerEntry> {
+  if (!entryPromise) {
+    entryPromise = import("@tanstack/react-start/server-entry").then(
       (m) => ((m as { default?: ServerEntry }).default ?? (m as unknown as ServerEntry)),
     );
   }
-  return serverEntryPromise;
-}
-
-function brandedErrorResponse(): Response {
-  return new Response(renderErrorPage(), {
-    status: 500,
-    headers: { "content-type": "text/html; charset=utf-8" },
-  });
-}
-
-async function normalize(response: Response): Promise<Response> {
-  if (response.status < 500) return response;
-  const ct = response.headers.get("content-type") ?? "";
-  if (!ct.includes("application/json")) return response;
-  const body = await response.clone().text();
-  if (!body.includes('"unhandled":true') || !body.includes('"message":"HTTPError"')) return response;
-  console.error(consumeLastCapturedError() ?? new Error(`h3 swallowed SSR error: ${body}`));
-  return brandedErrorResponse();
+  return entryPromise;
 }
 
 export default {
   async fetch(request: Request) {
     try {
-      const handler = await getServerEntry();
-      return await normalize(await handler.fetch(request));
+      const handler = await getEntry();
+      return await handler.fetch(request);
     } catch (error) {
       console.error(error);
-      return brandedErrorResponse();
+      return new Response("Internal Server Error", {
+        status: 500,
+        headers: { "content-type": "text/plain; charset=utf-8" },
+      });
     }
   },
 };

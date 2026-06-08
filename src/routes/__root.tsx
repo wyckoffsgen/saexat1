@@ -7,7 +7,8 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-void Outlet;
+import type { ReactNode } from "react";
+
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -93,20 +94,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:title", content: "Отель Саёхат — управление" },
       { name: "twitter:title", content: "Отель Саёхат — управление" },
-      { name: "description", content: "Pixel Perfect Project is a web application that enhances user interface and user experience for a booking system." },
-      { property: "og:description", content: "Pixel Perfect Project is a web application that enhances user interface and user experience for a booking system." },
-      { name: "twitter:description", content: "Pixel Perfect Project is a web application that enhances user interface and user experience for a booking system." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/98dd3c70-6dcf-4da6-a4fe-8e1139ddf00b/id-preview-7ffb0728--34ea1515-3a8f-4106-a833-87bdb9d4a704.lovable.app-1779278604360.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/98dd3c70-6dcf-4da6-a4fe-8e1139ddf00b/id-preview-7ffb0728--34ea1515-3a8f-4106-a833-87bdb9d4a704.lovable.app-1779278604360.png" },
-      { name: "twitter:card", content: "summary_large_image" },
+      {
+        property: "og:description",
+        content: "Панель управления номерами, бронированиями и сменами отеля Саёхат.",
+      },
+      {
+        name: "twitter:description",
+        content: "Панель управления номерами, бронированиями и сменами отеля Саёхат.",
+      },
+      { name: "twitter:card", content: "summary" },
       { property: "og:type", content: "website" },
     ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -114,7 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: React.ReactNode }) {
+function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="ru">
       <head>
@@ -146,6 +145,7 @@ function RootComponent() {
                       <ShiftProvider>
                         <ShiftWatcher />
                         <PageTransition />
+                        <Outlet />
                       </ShiftProvider>
                     </HotelGridProvider>
                   </BookingsProvider>
