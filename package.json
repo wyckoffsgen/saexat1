@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && node -e \"const fs=require('fs');const src='node_modules/tslib';const dst='.vercel/output/functions/__server.func/node_modules/tslib';if(fs.existsSync(src)){fs.rmSync(dst,{recursive:true,force:true});fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true});console.log('copied tslib into Vercel function');}else{console.log('tslib not found in node_modules, skipping copy');}\"",
     "preview": "vite preview"
   },
   "dependencies": {
